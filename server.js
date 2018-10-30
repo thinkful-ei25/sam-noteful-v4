@@ -38,6 +38,7 @@ app.use('/api/users', usersRouter);
 app.use('/api', authRouter);
 
 passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {
