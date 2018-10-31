@@ -22,7 +22,7 @@ router.post('/', (req,res,next)=>{
     });
   }
 
-  const stringFields = ['username', 'password', 'fullName'];
+  const stringFields = ['username', 'password', 'fullname'];
   const nonStringField = stringFields.find(
     field => field in req.body && typeof req.body[field] !== 'string'
   );
@@ -83,8 +83,8 @@ router.post('/', (req,res,next)=>{
     });
   }
 
-  let {username, password, fullName = ''} = req.body;
-  fullName = fullName.trim();
+  let {username, password, fullname = ''} = req.body;
+  fullname = fullname.trim();
 
   return User.find({username})
     .count()
@@ -103,7 +103,7 @@ router.post('/', (req,res,next)=>{
       return User.create({
         username,
         password: digest,
-        fullName
+        fullname
       });
     })
     .then(user =>{

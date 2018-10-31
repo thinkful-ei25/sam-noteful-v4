@@ -46,17 +46,17 @@ function validateTagIds(tags, userId){
     err.status=400;
   }
 
-  const badIds = tags.filter((tag) => !mongoose.Types.ObjectId.isValid(tag));
-  if (badIds.length) {
-    const err = new Error('The `tags` array contains an invalid `id`');
-    err.status = 400;
-    return Promise.reject(err);
-  }
+  // const badIds = tags.filter((tag) => !mongoose.Types.ObjectId.isValid(tag));
+  // if (badIds.length) {
+  //   const err = new Error('The `tags` array contains an invalid `id`');
+  //   err.status = 400;
+  //   return Promise.reject(err);
+  // }
 
-  return Tag.find({$and: [{_id: {$in:tags}, userId}]})
-    .then(results=>{
-      if(tags.length !== results.length){
-        const err = new Error('The `tags` array contains an invalid `id`');
+  return Tag.find({ $and: [{ _id: { $in: tags }, userId }] })
+    .then(results => {
+      if (tags.length !== results.length) {
+        const err = new Error('The `tags` array contains an invalid id');
         err.status = 400;
         return Promise.reject(err);
       }
@@ -155,9 +155,8 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const userId = req.user.id;
-
   const toUpdate = {userId};
-  const updateableFields = ['title', 'content', 'folderId', 'tags'];
+  const updateableFields = ['title', 'content', 'folderId', 'tags', 'userId'];
 
   updateableFields.forEach(field => {
     if (field in req.body) {
@@ -184,8 +183,8 @@ router.put('/:id', (req, res, next) => {
   }
 
   Promise.all([
-    validateFolderId(toUpdate.folderId, userId),
-    validateTagIds(toUpdate.tags, userId)
+    validateFolderId(toUpdate.folderId, toUpdate.userId),
+    validateTagIds(toUpdate.tags, toUpdate.userId)
   ])
     .then(() => {
       return Note.findByIdAndUpdate(id, toUpdate, { new: true })
