@@ -156,7 +156,7 @@ router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const userId = req.user.id;
   const toUpdate = {userId};
-  const updateableFields = ['title', 'content', 'folderId', 'tags', 'userId'];
+  const updateableFields = ['title', 'content', 'folderId', 'tags'];
 
   updateableFields.forEach(field => {
     if (field in req.body) {
@@ -187,7 +187,7 @@ router.put('/:id', (req, res, next) => {
     validateTagIds(toUpdate.tags, toUpdate.userId)
   ])
     .then(() => {
-      return Note.findByIdAndUpdate(id, toUpdate, { new: true })
+      return Note.findOneAndUpdate({_id: id, userId}, toUpdate, { new: true })
         .populate('tags');
     })
     .then(result => {
